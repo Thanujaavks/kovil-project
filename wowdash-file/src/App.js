@@ -86,6 +86,7 @@ import AddGroup from "./components/groups/addGroup";
 import AddStudent from "./components/groups/addStudent";
 import UploadFiles from "./components/groups/uploadFiles";
 import Files from "./components/files/files";
+import ViewBulkDetailsPage from "./pages/ViewBulkDetailsPage";
 
 
 function App() {
@@ -173,6 +174,8 @@ function App() {
         <Route exact path="/users-list" element={<UsersListPage />} />
         <Route exact path="/group-list" element={<Group/>} />
         <Route exact path="/view-details" element={<ViewDetailsPage />} />
+        <Route exact path="/view-details/:id" element={<ViewDetailsPage />} />
+        <Route exact path="/bulk-view-details" element={<ViewBulkDetailsPage />} />
         <Route exact path="/video-generator" element={<VideoGeneratorPage />} />
         <Route exact path="/videos" element={<VideosPage />} />
         <Route exact path="/view-profile" element={<ViewProfilePage />} />

@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ViewDetailsLayer = () => {
+const ViewBulkDetails = () => {
   return (
     <div className="row gy-4">
       <div className="col-xxl-12">
@@ -113,4 +113,4 @@ const ViewDetailsLayer = () => {
   );
 };
 
-export default ViewDetailsLayer;
+export default ViewBulkDetails;
