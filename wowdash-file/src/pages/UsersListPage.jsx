@@ -23,4 +23,4 @@ const UsersListPage = () => {
   );
 };
 
-export default UsersListPage; 
+export default UsersListPage;

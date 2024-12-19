@@ -26,59 +26,28 @@ const UsersListLayer = () => {
   return (
     <div className="card h-100 p-0 radius-12">
       <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
-        <div className="d-flex align-items-center flex-wrap gap-3">
-          <span className="text-md fw-medium text-secondary-light mb-0">
-            Show
-          </span>
-          <select
-            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
-            defaultValue="Select Number"
+        <div className="d-flex align-items-center justify-content-between w-100">
+          <div className="d-flex align-items-center gap-2">
+            <button
+              type="button"
+              className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+              onClick={handleFileUpload}
+            >
+              <Icon icon="lucide:upload" className="icon text-xl" />
+            </button>
+            <span className="text-info-600 fw-semibold">Upload File</span>
+          </div>
+          <Link
+            to="/add-user"
+            className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
           >
-            <option value="Select Number" disabled>
-              Select Number
-            </option>
-            <option value="1">1</option>
-          </select>
-          <form className="navbar-search">
-            <input
-              type="text"
-              className="bg-base h-40-px w-auto"
-              name="search"
-              placeholder="Search"
+            <Icon
+              icon="ic:baseline-plus"
+              className="icon text-xl line-height-1"
             />
-            <Icon icon="ion:search-outline" className="icon" />
-          </form>
-          <select
-            className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
-            defaultValue="Select Status"
-          >
-            <option value="Select Status" disabled>
-              Select Status
-            </option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+            Add New Customer
+          </Link>
         </div>
-        <div className="d-flex align-items-center justify-content-end gap-2">
-          <button
-            type="button"
-            className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-            onClick={handleFileUpload}
-          >
-            <Icon icon="lucide:upload" className="icon text-xl" />
-          </button>
-          Upload File{" "}
-        </div>
-        <Link
-          to="/add-user"
-          className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
-        >
-          <Icon
-            icon="ic:baseline-plus"
-            className="icon text-xl line-height-1"
-          />
-          Add New User
-        </Link>
       </div>
       <div className="card-body p-24">
         <div className="table-responsive scroll-sm">
@@ -89,17 +58,19 @@ const UsersListLayer = () => {
                 {/*<th scope="col">Join Date</th>*/}
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
-                 <th scope="col">Contact No</th>
-                <th scope="col" className="text-center">
+                <th scope="col">Contact No</th>
+                {/* <th scope="col" className="text-center">
                   Action
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
               {customerList
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((data, index) => (
-                  <tr key={data._id}>  {/* Use unique ID for key */}
+                  <tr key={data._id}>
+                    {" "}
+                    {/* Use unique ID for key */}
                     <th scope="row">{index + 1}</th>
                     <td>
                       <div className="d-flex align-items-center">
@@ -116,7 +87,7 @@ const UsersListLayer = () => {
                       </span>
                     </td>
                     <td>{data.contactNo}</td>
-                    <td className="text-center">
+                    {/* <td className="text-center">
                       <div className="d-flex align-items-center gap-10 justify-content-center">
                         <button
                           type="button"
@@ -143,7 +114,7 @@ const UsersListLayer = () => {
                           />
                         </button>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
             </tbody>
