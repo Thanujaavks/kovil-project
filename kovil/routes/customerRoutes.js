@@ -4,5 +4,6 @@ const router = express.Router();
 
 router.route('/addCustomer').post(addCustomer); // api for add customer
 router.route('/getCustomer').get(getCustomer);
-router.route('/saveData').post(saveData);
+router.route('/saveData').post(saveData);       // API for saving multiple customers
+
 export default router;
