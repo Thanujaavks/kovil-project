@@ -1,19 +1,20 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import axiosInstance from "../hook/axiosInstance";
 
 const EmailLayer = () => {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomers, setSelectedCustomers] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         const response = await axiosInstance.get(`/customers/getCustomer`);
         setCustomers(response.data);
-        setSelectedCustomers(Array(response.data.length).fill(false)); // Initialize selection state
+        setSelectedCustomers(Array(response.data.length).fill(false));
       } catch (error) {
         console.error("Error fetching customers:", error);
       }
@@ -32,6 +33,17 @@ const EmailLayer = () => {
     updatedSelection[index] = !updatedSelection[index];
     setSelectedCustomers(updatedSelection);
     setSelectAll(updatedSelection.every((isSelected) => isSelected)); // Update selectAll status
+  };
+
+  const handleViewDetailsClick = () => {
+    const selectedCustomerIds = customers
+      .filter((_, index) => selectedCustomers[index])
+      .map((customer) => customer._id);
+
+    // Redirect to the view details page with the selected customers
+    navigate(`/view-details`, {
+      state: { selectedCustomers: customers.filter((_, index) => selectedCustomers[index]) }
+    });
   };
 
   return (
@@ -54,6 +66,17 @@ const EmailLayer = () => {
                     Select All
                   </label>
                 </div>
+                {selectedCustomers.some((isSelected) => isSelected) && (
+                  <div className="d-flex justify-content-center mt-4">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleViewDetailsClick}
+                    >
+                      Send Message
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -66,44 +89,44 @@ const EmailLayer = () => {
                     new Date(a.createdAt).getTime()
                 )
                 .map((data, index) => (
-                    <li
-                      key={data._id}
-                      className="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
+                  <li
+                    key={data._id}
+                    className="email-item px-24 py-16 d-flex gap-4 align-items-center border-bottom cursor-pointer bg-hover-neutral-200 min-w-max-content"
+                  >
+                    <div className="form-check style-check d-flex align-items-center">
+                      <input
+                        className="form-check-input radius-4 border border-neutral-400"
+                        type="checkbox"
+                        name="checkbox"
+                        checked={selectedCustomers[index] || false}
+                        onChange={() => handleCheckboxChange(index)}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
                     >
-                      <div className="form-check style-check d-flex align-items-center">
-                        <input
-                          className="form-check-input radius-4 border border-neutral-400"
-                          type="checkbox"
-                          name="checkbox"
-                          checked={selectedCustomers[index] || false}
-                          onChange={() => handleCheckboxChange(index)}
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        className="starred-button icon text-xl text-secondary-light line-height-1 d-flex"
-                      >
-                        <Icon
-                          icon="ph:star"
-                          className="icon-outline line-height-1"
-                        />
-                        <Icon
-                          icon="ph:star-fill"
-                          className="icon-fill line-height-1 text-warning-600"
-                        />
-                      </button>
-                      <Link
-                        to={`/view-details/${data._id}`}
-                        className="text-primary-light fw-medium text-md text-line-1 w-190-px"
-                      >
-                        {data.name}
-                      </Link>
-                      <span className="text-secondary-light ms-auto">
-                        {new Date(data.createdAt).toLocaleString()}
-                      </span>
-                    </li>
-                  ))}
-              </ul>
+                      <Icon
+                        icon="ph:star"
+                        className="icon-outline line-height-1"
+                      />
+                      <Icon
+                        icon="ph:star-fill"
+                        className="icon-fill line-height-1 text-warning-600"
+                      />
+                    </button>
+                    <Link
+                      to={`/view-details/${data._id}`}
+                      className="text-primary-light fw-medium text-md text-line-1 w-190-px"
+                    >
+                      {data.name}
+                    </Link>
+                    <span className="text-secondary-light ms-auto">
+                      {new Date(data.createdAt).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
       </div>

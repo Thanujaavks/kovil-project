@@ -9,13 +9,13 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
 const sendSms = asyncHandler(async (req, res) => {
-    const { message, page = 1, limit = 10 } = req.body;  // Default to page 1 and limit 10 if not provided
+    const { message, page = 1, limit = 10 } = req.body;
 
     try {
         // Fetch customers with pagination
         const customers = await Customer.find()
-            .skip((page - 1) * limit)  // Skip based on current page and limit
-            .limit(Number(limit));  // Limit the number of results
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
 
         // Loop through the customers and send SMS
         const sendMessages = [];
@@ -24,8 +24,8 @@ const sendSms = asyncHandler(async (req, res) => {
             try{
                 const sendMessage = await client.messages.create({
                     body: message,
-                    from: process.env.TWILIO_FROM_NUMBER,  // Twilio number
-                    to: customer.contactNo,  // Assuming the customer model has a 'phone' field
+                    from: process.env.TWILIO_FROM_NUMBER,
+                    to: customer.contactNo,
                 });
                 sendMessages.push(sendMessage);
                 console.log(`Message sent to ${customer.contactNo}: ${sendMessage.sid}`);
