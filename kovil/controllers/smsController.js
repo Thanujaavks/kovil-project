@@ -8,20 +8,36 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
 
+
+const getAccountBalance = asyncHandler(async (req, res) => {
+    try {
+        const balanceData = await client.balance.fetch(); // Correct Usage API endpoint
+
+        // Debug log for better clarity
+        console.log("Twilio Balance Data:", balanceData);
+
+        res.status(200).json({
+            balance: balanceData.balance,
+            currency: balanceData.currency,
+        });
+    } catch (error) {
+        console.error("Error fetching Twilio balance:", error);
+        res.status(500).json({ message: "Error fetching Twilio balance", error: error.message });
+    }
+});
+
 const sendSms = asyncHandler(async (req, res) => {
-    const { message, page = 1, limit = 10 } = req.body;
+    const { message } = req.body;
 
     try {
-        // Fetch customers with pagination
-        const customers = await Customer.find()
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
+        // Fetch all customers
+        const customers = await Customer.find();
 
         // Loop through the customers and send SMS
         const sendMessages = [];
         const invalidNumbers = [];
         for (const customer of customers) {
-            try{
+            try {
                 const sendMessage = await client.messages.create({
                     body: message,
                     from: process.env.TWILIO_FROM_NUMBER,
@@ -29,9 +45,8 @@ const sendSms = asyncHandler(async (req, res) => {
                 });
                 sendMessages.push(sendMessage);
                 console.log(`Message sent to ${customer.contactNo}: ${sendMessage.sid}`);
-            }
-            catch{
-                invalidNumbers.push(customer.contactNo)
+            } catch {
+                invalidNumbers.push(customer.contactNo);
             }
         }
 
@@ -40,9 +55,7 @@ const sendSms = asyncHandler(async (req, res) => {
             messages: sendMessages,
             totalCustomers: customers.length,
             invalidNumbers,
-            sendMessagesCount: sendMessages.length -1,
-            page,
-            limit,
+            sendMessagesCount: sendMessages.length,
         });
     } catch (error) {
         console.error("Error sending messages:", error);
@@ -52,4 +65,5 @@ const sendSms = asyncHandler(async (req, res) => {
 
 
 
-export {sendSms };
+
+export {sendSms, getAccountBalance };
