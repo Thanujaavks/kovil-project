@@ -21,6 +21,15 @@ const getCustomer = asyncHandler(async (req, res) => {
   res.status(200).json(customer);
 });
 
+const getCustomerCount = asyncHandler(async(req, res) => {
+  try {
+    const customerCount = await Customer.countDocuments();
+    res.status(200).json({customerCount})
+  } catch (error) {
+    console.error("Error fetching user count:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
 // Function to save customer data from CSV
 const saveData = asyncHandler(async (req, res) => {
   const { data } = req.body;  // Data sent from the frontend
@@ -49,4 +58,6 @@ const saveData = asyncHandler(async (req, res) => {
 });
 
 
-export { addCustomer, getCustomer, saveData };
+
+
+export { addCustomer, getCustomer, saveData, getCustomerCount };
