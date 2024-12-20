@@ -12,7 +12,7 @@ const ViewDetailsPage = () => {
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Components / Email" />
+        <Breadcrumb title="Messages / Send Message" />
 
         {/* ViewDetailsLayer */}
         <ViewDetailsLayer />

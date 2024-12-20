@@ -115,7 +115,18 @@ const MasterLayout = ({ children }) => {
         </div>
         <div className="sidebar-menu-area">
           <ul className="sidebar-menu" id="sidebar-menu">
-            <li className="sidebar-menu-group-title">Application</li>
+            <li>
+              <NavLink
+                to="/"
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon
+                  icon="solar:home-smile-angle-outline"
+                  className="menu-icon"
+                />
+                <span>Dashboard</span>
+              </NavLink>
+            </li>
             <li>
               <NavLink
                 to="/users-list"
@@ -134,7 +145,7 @@ const MasterLayout = ({ children }) => {
                 className={(navData) => (navData.isActive ? "active-page" : "")}
               >
                 <Icon icon="mage:email" className="menu-icon" />
-                <span>Email</span>
+                <span>Messages</span>
               </NavLink>
             </li>
           </ul>

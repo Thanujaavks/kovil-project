@@ -11,7 +11,7 @@ const EmailPage = () => {
       <MasterLayout>
 
         {/* Breadcrumb */}
-        <Breadcrumb title="Email" />
+        <Breadcrumb title="Messages" />
 
         {/* EmailLayer */}
         <EmailLayer />

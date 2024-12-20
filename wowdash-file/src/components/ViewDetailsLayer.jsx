@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axiosInstance from "../hook/axiosInstance";
 
 const ViewDetailsLayer = () => {
@@ -47,43 +47,70 @@ const ViewDetailsLayer = () => {
   };
 
   return (
-    <div className="sms-container">
-      <h4>Send SMS</h4>
-      {status && (
-        <div className={`alert alert-${status.type}`}>{status.message}</div>
-      )}
-
-      <div className="selected-customers">
-        <h5>Selected Customers</h5>
-        <ul>
-          {selectedCustomers?.map((customer, index) => (
-            <li key={customer._id}>
-              {customer.name}
-              <input
-                type="text"
-                value={customerNumbers[index]}
-                onChange={(e) => handlePhoneNumberChange(index, e.target.value)}
-                className="form-control"
-              />
-            </li>
-          ))}
-        </ul>
+    <div className="card h-100 p-0 radius-12">
+      <div className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+        <h4 className="mb-0">Selected Customers</h4>
+        {status && (
+          <div className={`alert alert-${status.type} mb-0`}>
+            {status.message}
+          </div>
+        )}
+        <div className="d-flex align-items-center gap-3">
+          <Link
+            to="/email"
+            className="btn btn-primary text-md btn-sm px-20 py-12 radius-8 d-flex align-items-center gap-2"
+          >
+            Back
+          </Link>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Message</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter your message"
-            className="form-control"
-          />
+      <div className="card-body px-24 py-16">
+        <div className="selected-customers mb-4">
+          <ul className="list-unstyled">
+            {selectedCustomers?.map((customer, index) => (
+              <li
+                key={customer._id}
+                className="mb-3 d-flex align-items-center gap-3 w-50"
+              >
+                <span className="customer-name" style={{ flex: 1 }}>
+                  {customer.name}
+                </span>
+                <input
+                  type="text"
+                  value={customerNumbers[index]}
+                  onChange={(e) =>
+                    handlePhoneNumberChange(index, e.target.value)
+                  }
+                  className="form-control w-50"
+                  placeholder="Enter phone number"
+                />
+              </li>
+            ))}
+          </ul>
         </div>
-        <button type="submit" className="btn btn-primary">
-          Send SMS
-        </button>
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group mb-3 d-flex align-items-center gap-3 w-75">
+            <h6 className="mb-0" style={{ flex: 1 }}>
+              Type Message
+            </h6>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter your message"
+              className="form-control"
+              rows="4"
+              style={{ flex: 2 }}
+            />
+          </div>
+          <div className="d-flex justify-content-end w-75">
+            <button type="submit" className="btn btn-primary">
+              Send SMS
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
