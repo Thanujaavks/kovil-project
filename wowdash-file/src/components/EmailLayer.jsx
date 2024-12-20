@@ -116,7 +116,6 @@ const EmailLayer = () => {
                       />
                     </button>
                     <Link
-                      to={`/view-details/${data._id}`}
                       className="text-primary-light fw-medium text-md text-line-1 w-190-px"
                     >
                       {data.name}
