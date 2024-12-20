@@ -1,9 +1,9 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import MasterLayout from "../../masterLayout/MasterLayout";
-import { supabase } from "../../hook/supabaseClient";
 import Papa from "papaparse";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../hook/axiosInstance";
 
 const UploadFiles = () => {
   const [fileName, setFileName] = useState("");
@@ -18,40 +18,113 @@ const UploadFiles = () => {
     }
   };
 
-  const handleUpload = async () => {
-    if (!file) return alert("Please select a CSV file.");
-
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: async (results) => {
-        const data = results.data;
-        setCsvData(data);
-
-        // Insert data into the database
-        const { data: insertedData, error } = await supabase.from("your_table_name").insert(data);
-
-        if (error) {
-          console.error("Error inserting data:", error);
-          alert("Failed to upload data to the database.");
-        } else {
-          console.log("Inserted data:", insertedData);
-          alert("Data uploaded successfully!");
-        }
-      },
-      error: (error) => {
-        console.error("Error parsing CSV file:", error);
-        alert("Failed to parse the CSV file.");
-      },
-    });
-  };
-
   const handleClose = () => {
     setFileName("");
     setFile(null);
     setCsvData([]);
     alert("File upload canceled. Selection has been cleared.");
   };
+
+  const validateCSVData = (data) => {
+    return data.every(
+      (record) =>
+        record.name?.trim() && record.email?.trim() && record.contactNo?.trim()
+    );
+  };
+
+  const handleUpload = () => {
+    if (!file) {
+      alert("Please select a file first.");
+      return;
+    }
+
+    Papa.parse(file, {
+      complete: (result) => {
+        console.log("Parsed CSV Data:", result.data); // Log parsed data for verification
+
+        const validRows = result.data.filter(
+          (record) => record.name && record.email && record.contactNo
+        );
+        const invalidRows = result.data.filter(
+          (record) => !record.name || !record.email || !record.contactNo
+        );
+
+        if (invalidRows.length > 0) {
+          console.log("Invalid rows found:", invalidRows);
+
+          // Create a readable formatted message for invalid rows
+          const formattedInvalidRows = invalidRows
+            .map((row, index) => {
+              const name = row.name || "Missing name";
+              const email = row.email || "Missing email";
+              const contactNo = row.contactNo || "Missing contact number";
+              return `Row ${
+                index + 1
+              } - Name: ${name}, Email: ${email}, Contact No: ${contactNo}`;
+            })
+            .join("\n");
+
+          // Alert with more details on the invalid rows
+          alert(
+            `Invalid rows found:\n\n${formattedInvalidRows}\n\nEnsure all records have 'name', 'email', and 'contactNo'.`
+          );
+          return;
+        }
+
+        setCsvData(validRows);
+        uploadDataToBackend(validRows);
+      },
+      header: true, // Assuming the CSV has headers
+      skipEmptyLines: true, // Skip empty lines during parsing
+      dynamicTyping: true, // Automatically convert types (e.g., numbers)
+    });
+  };
+
+  const uploadDataToBackend = async (data) => {
+    // Filter out records missing required fields
+    const filteredData = data.filter(
+      (record) => record.name && record.email && record.contactNo
+    );
+  
+    // Log filtered data to the console for debugging
+    console.log("Filtered Data:", filteredData);
+  
+    if (filteredData.length === 0) {
+      alert(
+        "No valid data to upload. Ensure all records have 'name', 'email', and 'contactNo'."
+      );
+      return;
+    }
+  
+    try {
+      // Sending the parsed CSV data to the backend
+      const response = await axiosInstance.post('/customers/saveData', {
+        data: filteredData,
+      });
+  
+      console.log("Data uploaded successfully:", response.data);
+      alert("Data uploaded successfully");
+    } catch (error) {
+      // Enhanced error handling
+      console.error("Error uploading data:", error);
+  
+      // Check if the error has a response (i.e., the request was made and the server responded with an error)
+      if (error.response) {
+        console.error('Response status:', error.response.status); // Log the status code
+        console.error('Response data:', error.response.data); // Log the response body
+        alert(`Error uploading data: ${error.response.data.message || 'Unknown error'}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+        alert('Error uploading data: No response received from the server.');
+      } else {
+        // Something went wrong during the setup of the request
+        console.error('Error setting up request:', error.message);
+        alert(`Error uploading data: ${error.message}`);
+      }
+    }
+  };
+  
 
   return (
     <MasterLayout>
@@ -69,7 +142,9 @@ const UploadFiles = () => {
             <div className="col-xxl-6 col-xl-8 col-lg-10">
               <div className="card border mb-5">
                 <div className="card-body">
-                  <h6 className="text-md text-primary-light mb-16">Upload CSV File</h6>
+                  <h6 className="text-md text-primary-light mb-16">
+                    Upload CSV File
+                  </h6>
                   <div className="mb-24 mt-16">
                     <form>
                       <label
