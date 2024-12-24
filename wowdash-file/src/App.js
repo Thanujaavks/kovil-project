@@ -87,14 +87,15 @@ import AddStudent from "./components/groups/addStudent";
 import UploadFiles from "./components/groups/uploadFiles";
 import Files from "./components/files/files";
 import ViewBulkDetailsPage from "./pages/ViewBulkDetailsPage";
-
+import Login from "./components/login/login";
 
 function App() {
   return (
     <BrowserRouter>
       <RouteScrollToTop />
       <Routes>
-        <Route exact path="/" element={<HomePageOne />} />
+      <Route exact path="/" element={<Login />} />
+      <Route exact path="/dashboard" element={<HomePageOne />} />
         <Route exact path="/index-2" element={<HomePageTwo />} />
         <Route exact path="/index-3" element={<HomePageThree />} />
         <Route exact path="/index-4" element={<HomePageFour />} />
